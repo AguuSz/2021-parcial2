@@ -1,14 +1,12 @@
 package info3.parcial2;
 
-import java.util.Date;
-
 public class MailManager {
     /**
      * Agrega un mail al gestor
      *
      * @param m mail a agregar
      */
-    public void addMail(Email m) {
+    public void addMail(Mail m) {
 
     }
 
@@ -26,8 +24,8 @@ public class MailManager {
      *
      * @return lista de mails ordenados
      */
-    public Email[] getSortedByDate() {
-        return new Email[0];
+    public Mail[] getSortedByDate() {
+        return new Mail[0];
     }
 
     /**
@@ -38,8 +36,8 @@ public class MailManager {
      * @param hasta Fecha hasta donde buscar
      * @return lista de mails ord-enados
      */
-    public Email[] getSortedByDate(String desde, String hasta) {
-        return new Email[0];
+    public Mail[] getSortedByDate(String desde, String hasta) {
+        return new Mail[0];
     }
 
     /**
@@ -47,8 +45,8 @@ public class MailManager {
      *
      * @return lista de mails ordenados
      */
-    public Email[] getSortedByFrom() {
-        return new Email[0];
+    public Mail[] getSortedByFrom() {
+        return new Mail[0];
     }
 
     /**
@@ -57,8 +55,8 @@ public class MailManager {
      * @param from String con direccion del remitente
      * @return lista de mails del remitente
      */
-    public Email[] getByFrom(String from) {
-        return new Email[0];
+    public Mail[] getByFrom(String from) {
+        return new Mail[0];
     }
 
     /**
@@ -68,7 +66,7 @@ public class MailManager {
      * @param query String con palabra/s a buscar
      * @return lista de mails que contienen dicha/s palabra/s
      */
-    public Email[] getByQuery(String query) {
-        return new Email[0];
+    public Mail[] getByQuery(String query) {
+        return new Mail[0];
     }
 }
