@@ -1,18 +1,17 @@
 package info3.parcial2.Structures;
 
-public class TreeNode <T extends Comparable<T>>{
+public class RBNode<T extends Comparable<T>>{
     private T data;
     private boolean isRed;
-    private TreeNode<T> leftChild;
-    private TreeNode<T> rightChild;
-    private TreeNode<T> parent;
+    private RBNode<T> leftChild;
+    private RBNode<T> rightChild;
+    private RBNode<T> parent;
 
-    public TreeNode() {
+    public RBNode() {
     }
 
-    public TreeNode(T data, TreeNode<T> parent) {
+    public RBNode(T data) {
         this.data = data;
-        this.parent = parent;
     }
 
     public boolean isLeftChild() {
@@ -20,7 +19,7 @@ public class TreeNode <T extends Comparable<T>>{
     }
 
     public void flipColor() {
-        setRed(!isRed());
+        isRed = !isRed;
     }
 
     public T getData() {
@@ -39,27 +38,27 @@ public class TreeNode <T extends Comparable<T>>{
         isRed = red;
     }
 
-    public TreeNode<T> getLeftChild() {
+    public RBNode<T> getLeftChild() {
         return leftChild;
     }
 
-    public void setLeftChild(TreeNode<T> leftChild) {
+    public void setLeftChild(RBNode<T> leftChild) {
         this.leftChild = leftChild;
     }
 
-    public TreeNode<T> getRightChild() {
+    public RBNode<T> getRightChild() {
         return rightChild;
     }
 
-    public void setRightChild(TreeNode<T> rightChild) {
+    public void setRightChild(RBNode<T> rightChild) {
         this.rightChild = rightChild;
     }
 
-    public TreeNode<T> getParent() {
+    public RBNode<T> getParent() {
         return parent;
     }
 
-    public void setParent(TreeNode<T> parent) {
+    public void setParent(RBNode<T> parent) {
         this.parent = parent;
     }
 

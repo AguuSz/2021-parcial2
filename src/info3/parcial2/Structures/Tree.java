@@ -3,7 +3,7 @@ package info3.parcial2.Structures;
 public interface Tree <T extends Comparable<T>> {
     Tree<T> insert(T data);
 
-    void delete (T data);
+    void delete (T data) throws Exception;
 
     void traverse();
 
