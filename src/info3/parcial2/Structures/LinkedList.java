@@ -1,5 +1,8 @@
 package info3.parcial2.Structures;
 
+import java.util.Iterator;
+import java.util.Optional;
+
 public class LinkedList<AnyType> {
     private LinkedNode<AnyType> begin;
     private int size;
@@ -43,7 +46,7 @@ public class LinkedList<AnyType> {
      * @param pos
      * @return the data
      */
-    public AnyType get(int pos) throws Exception {
+    public AnyType get(int pos) {
         LinkedNode<AnyType> aux = getNode(pos);
         return aux.data;
     }
@@ -83,7 +86,7 @@ public class LinkedList<AnyType> {
         return size;
     }
 
-    private LinkedNode<AnyType> getNode(int pos) throws Exception {
+    private LinkedNode<AnyType> getNode(int pos) {
         LinkedNode<AnyType> aux = begin;
         int p = 0;
         while (p < pos && aux != null) {
@@ -91,7 +94,7 @@ public class LinkedList<AnyType> {
             aux = aux.next;
         }
         if (aux == null) {
-            throw new Exception("pos not found");
+            return null;
         }
         return aux;
     }

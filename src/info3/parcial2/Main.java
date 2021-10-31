@@ -1,14 +1,16 @@
 package info3.parcial2;
 
-import info3.parcial2.Structures.LinkedList;
-
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class Main {
+    private static final MailManager manager = new MailManager();
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        MailManager manager = new MailManager();
+
         int option;
         boolean exit = false;
 
@@ -23,27 +25,86 @@ public class Main {
             System.out.println("\t5) Mostrar mails ordenados por remitente.");
             System.out.println("\t6) Filtrar mails por palabras o asunto.");
             System.out.println("\t0) Salir.");
+
+            System.out.println("\t9) Imprimir arbol.");
             System.out.println("****************************************************");
 
             System.out.print("Opcion: ");
             option = scanner.nextInt();
 
             switch (option) {
-                case 1 -> addEmail();
-                case 2 -> deleteEmail();
-                case 3 -> getSortedByDate();
-                case 4 -> getByFrom();
-                case 5 -> getSortedByFrom();
-                case 6 -> getByQuery();
-                case 0 -> exit = true;
-                default -> System.out.println("Opcion no contemplada.");
+                case 1:
+                    addEmail();
+                    break;
+                case 2:
+                    deleteEmail();
+                    break;
+                case 3:
+                    getSortedByDate();
+                    break;
+                case 4:
+                    getByFrom();
+                    break;
+                case 5:
+                    getSortedByFrom();
+                    break;
+                case 6:
+                    getByQuery();
+                    break;
+                case 0:
+                    exit = true;
+                    break;
+                case 9:
+                    manager.printIdTree();
+                    break;
+                default:
+                    System.out.println("Opcion no contemplada.");
+                    break;
             }
         }
     }
 
-    private static void addEmail() { }
+    private static void addEmail() {
+        Mail tempMail = new Mail();
+        Scanner scanner = new Scanner(System.in);
 
-    private static void deleteEmail() {}
+        // Obtiene la ultima ID e incrementa en uno para setearselo al correo temporal
+        tempMail.setId(manager.getLastIdIntroduced() + 1);
+
+        System.out.print("Remitente: ");
+        tempMail.setFrom(scanner.nextLine());
+
+        tempMail.setDate(getTodayDateFormatted());
+
+        System.out.print("Asunto: ");
+        tempMail.setSubject(scanner.nextLine());
+
+        System.out.print("Contenido: ");
+        tempMail.setContent(scanner.nextLine());
+
+        manager.addMail(tempMail);
+    }
+
+    private static String getTodayDateFormatted() {
+        //Get current date time
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        return now.format(formatter);
+    }
+
+    private static void deleteEmail() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Ingrese el ID: ");
+        long id = scanner.nextLong();
+
+        if (id < 0) {
+            System.out.println("ID invalido.");
+            return;
+        }
+        manager.deleteMail(id);
+    }
 
     private static void getSortedByDate() {}
 

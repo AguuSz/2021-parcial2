@@ -17,6 +17,7 @@ public class MailParser {
         String content = "";
         LinkedList<Mail> mailList = new LinkedList<>();
         Mail mailTemp = new Mail();
+        int counter = 0;
 
         try {
             FileReader fileReader = new FileReader(pathFile);
@@ -26,6 +27,7 @@ public class MailParser {
                 if (str.equals("-.-.-:-.-.-")) {
                     mailTemp.setContent(content);
                     Mail mail = mailTemp.clone();
+                    mail.setId(++counter);
                     mailList.add(mail);
                     content = "";
                 }

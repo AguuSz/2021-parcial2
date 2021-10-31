@@ -1,8 +1,9 @@
 package info3.parcial2.Structures;
 
 public class AVLTree<K extends Comparable<K>, T> {
-
     private Node<K, T> root;
+
+    public AVLTree() {}
 
     public AVLTree<K, T> insert(K key, T data) {
         root = insert(key, data, root);
@@ -159,5 +160,40 @@ public class AVLTree<K extends Comparable<K>, T> {
 
     public boolean isEmpty() {
         return false;
+    }
+
+    /**
+     * Internal method to print a subtree in sorted order.
+     * @param t the node that roots the tree.
+     */
+    private void printTree( Node<K, T> t )
+    {
+        if( t != null )
+        {
+            printTree( t.getLeftChild());
+            System.out.println( t.getKey() );
+            printTree( t.getRightChild() );
+        }
+    }
+
+    public void print() {
+        print(false, "", root);
+    }
+
+    private void print(boolean isRight, String identation, Node<K, T> r) {
+        if (r.getRightChild() != null) {
+            print(true, identation + (isRight ? "     " : "|    "), r.getRightChild());
+        }
+        System.out.print(identation);
+        if (isRight) {
+            System.out.print(" /");
+        } else {
+            System.out.print(" \\");
+        }
+        System.out.print("-- ");
+        System.out.println(r.getKey());
+        if (r.getLeftChild() != null) {
+            print(false, identation + (isRight ? "|    " : "     "), r.getLeftChild());
+        }
     }
 }
