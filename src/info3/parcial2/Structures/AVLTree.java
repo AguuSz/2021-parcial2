@@ -1,23 +1,22 @@
 package info3.parcial2.Structures;
 
-public class AVLTree<T extends Comparable<T>> implements Tree<T> {
+public class AVLTree<K extends Comparable<K>, T> {
 
-    private AVLNode<T> root;
+    private Node<K, T> root;
 
-    @Override
-    public Tree<T> insert(T data) {
-        root = insert(data, root);
+    public AVLTree<K, T> insert(K key, T data) {
+        root = insert(key, data, root);
         return this;
     }
 
-    private AVLNode<T> insert(T data, AVLNode<T> node) {
+    private Node<K, T> insert(K key, T data, Node<K, T> node) {
         if (node == null) {
-            return new AVLNode<>(data);
+            return new Node<>(key, data);
         }
-        if (data.compareTo(node.getData()) < 0) {
-            node.setLeftChild(insert(data, node.getLeftChild()));
-        } else if (data.compareTo(node.getData()) > 0) {
-            node.setRightChild(insert(data, node.getRightChild()));
+        if (key.compareTo(node.getKey()) < 0) {
+            node.setLeftChild(insert(key, data, node.getLeftChild()));
+        } else if (key.compareTo(node.getKey()) > 0) {
+            node.setRightChild(insert(key, data, node.getRightChild()));
         } else {
             return node;
         }
@@ -25,19 +24,35 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> {
         return applyRotation(node);
     }
 
-    @Override
-    public void delete(T data) {
-        root = delete(data, root);
+    public T get(K key) {
+        return get(key, root);
     }
 
-    private AVLNode<T> delete(T data, AVLNode<T> node) {
+    private T get(K key, Node<K, T> node) {
         if (node == null) {
             return null;
         }
-        if (data.compareTo(node.getData()) < 0) {
-            node.setLeftChild(delete(data, node.getLeftChild()));
-        } else if (data.compareTo(node.getData()) > 0) {
-            node.setRightChild(delete(data, node.getRightChild()));
+        if (key.compareTo(node.getKey()) < 0) {
+            return get(key, node.getLeftChild());
+        } else if (key.compareTo(node.getKey()) > 0) {
+            return get(key, node.getRightChild());
+        } else {
+            return node.getData();
+        }
+    }
+
+    public void delete(K key) {
+        root = delete(key, root);
+    }
+
+    private Node<K, T> delete(K key, Node<K, T> node) {
+        if (node == null) {
+            return null;
+        }
+        if (key.compareTo(node.getKey()) < 0) {
+            node.setLeftChild(delete(key, node.getLeftChild()));
+        } else if (key.compareTo(node.getKey()) > 0) {
+            node.setRightChild(delete(key, node.getRightChild()));
         } else {
             if (node.getLeftChild() == null) {
                 return node.getRightChild();
@@ -45,14 +60,16 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> {
                 return node.getLeftChild();
             }
 
-            node.setData(getMax(node.getLeftChild()));
-            node.setLeftChild(delete(node.getData(), node.getLeftChild()));
+            Node<K, T> tempNode = getMax(node.getLeftChild());
+            node.setKey(tempNode.getKey());
+            node.setData(tempNode.getData());
+            node.setLeftChild(delete(node.getKey(), node.getLeftChild()));
         }
         updateHeight(node);
         return applyRotation(node);
     }
 
-    private AVLNode<T> applyRotation(AVLNode<T> node) {
+    private Node<K, T> applyRotation(Node<K, T> node) {
         int balance = balance(node);
         if (balance > 1) {
             // esta desbalanceado a la izquierda
@@ -71,9 +88,9 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> {
         return node;
     }
 
-    private AVLNode<T> rotateRight(AVLNode<T> node) {
-        AVLNode<T> leftNode = node.getLeftChild();
-        AVLNode<T> centerNode = leftNode.getRightChild();
+    private Node<K, T> rotateRight(Node<K, T> node) {
+        Node<K, T> leftNode = node.getLeftChild();
+        Node<K, T> centerNode = leftNode.getRightChild();
         leftNode.setRightChild(node);
         node.setLeftChild(centerNode);
         updateHeight(node);
@@ -81,9 +98,9 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> {
         return leftNode;
     }
 
-    private AVLNode<T> rotateLeft(AVLNode<T> node) {
-        AVLNode<T> rightNode = node.getRightChild();
-        AVLNode<T> centerNode = rightNode.getLeftChild();
+    private Node<K, T> rotateLeft(Node<K, T> node) {
+        Node<K, T> rightNode = node.getRightChild();
+        Node<K, T> centerNode = rightNode.getLeftChild();
         rightNode.setLeftChild(node);
         node.setRightChild(centerNode);
         updateHeight(node);
@@ -91,59 +108,55 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> {
         return rightNode;
     }
 
-    private int balance(AVLNode<T> node) {
+    private int balance(Node<K, T> node) {
         return node != null ? height(node.getLeftChild()) - height(node.getRightChild()) : 0;
     }
 
-    private void updateHeight(AVLNode<T> node) {
+    private void updateHeight(Node<K, T> node) {
         int maxHeight = Math.max(height(node.getLeftChild()), height(node.getRightChild()));
         node.setHeight(maxHeight + 1);
     }
 
-    private int height (AVLNode<T> node) {
+    private int height (Node<K, T> node) {
         return node != null ? node.getHeight() : 0;
     }
 
-    @Override
     public void traverse() {
         traverseInOrder(root);
     }
-    private void traverseInOrder(AVLNode<T> node) {
+    private void traverseInOrder(Node<K, T> node) {
         if (node != null) {
             traverseInOrder(node.getLeftChild());
             traverseInOrder(node.getRightChild());
         }
     }
 
-    @Override
-    public T getMax() {
+    public Node<K, T> getMax() {
         if (isEmpty()) {
             return null;
         }
         return getMax(root);
     }
-    private T getMax(AVLNode<T> node) {
+    private Node<K, T> getMax(Node<K, T> node) {
         if (node.getRightChild() != null) {
             return getMax(node.getRightChild());
         }
-        return node.getData();
+        return node;
     }
 
-    @Override
-    public T getMin() {
+    public Node<K, T> getMin() {
         if (isEmpty()) {
             return null;
         }
         return getMin(root);
     }
-    public T getMin(AVLNode<T> node) {
+    public Node<K, T> getMin(Node<K, T> node) {
         if (node.getLeftChild() != null) {
             return getMin(node.getLeftChild());
         }
-        return node.getData();
+        return node;
     }
 
-    @Override
     public boolean isEmpty() {
         return false;
     }

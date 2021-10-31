@@ -1,13 +1,23 @@
 package info3.parcial2.Structures;
 
-public class AVLNode<T extends Comparable<T>> {
+public class Node<K extends Comparable<K>, T> {
     private T data;
+    private K key;
     private int height = 1;
-    private AVLNode<T> leftChild;
-    private AVLNode<T> rightChild;
+    private Node<K, T> leftChild;
+    private Node<K, T> rightChild;
 
-    public AVLNode(T data) {
+    public Node(K key, T data) {
         this.data = data;
+        this.key = key;
+    }
+
+    public K getKey() {
+        return key;
+    }
+
+    public void setKey(K key) {
+        this.key = key;
     }
 
     public T getData() {
@@ -26,19 +36,19 @@ public class AVLNode<T extends Comparable<T>> {
         this.height = height;
     }
 
-    public AVLNode<T> getLeftChild() {
+    public Node<K, T> getLeftChild() {
         return leftChild;
     }
 
-    public void setLeftChild(AVLNode<T> leftChild) {
+    public void setLeftChild(Node<K, T> leftChild) {
         this.leftChild = leftChild;
     }
 
-    public AVLNode<T> getRightChild() {
+    public Node<K, T> getRightChild() {
         return rightChild;
     }
 
-    public void setRightChild(AVLNode<T> rightChild) {
+    public void setRightChild(Node<K, T> rightChild) {
         this.rightChild = rightChild;
     }
 }
