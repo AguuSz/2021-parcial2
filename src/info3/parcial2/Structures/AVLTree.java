@@ -42,6 +42,10 @@ public class AVLTree<K extends Comparable<K>, T> {
         }
     }
 
+    public Node<K, T> getRoot() {
+        return this.root;
+    }
+
     public void delete(K key) {
         root = delete(key, root);
     }

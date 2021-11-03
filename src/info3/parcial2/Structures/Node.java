@@ -1,6 +1,8 @@
 package info3.parcial2.Structures;
 
-public class Node<K extends Comparable<K>, T> {
+import info3.parcial2.TreePrinter;
+
+public class Node<K extends Comparable<K>, T> implements TreePrinter.PrintableNode {
     private T data;
     private K key;
     private int height = 1;
@@ -50,5 +52,29 @@ public class Node<K extends Comparable<K>, T> {
 
     public void setRightChild(Node<K, T> rightChild) {
         this.rightChild = rightChild;
+    }
+
+    /**
+     * Get left child
+     */
+    @Override
+    public TreePrinter.PrintableNode getLeft() {
+        return getLeftChild();
+    }
+
+    /**
+     * Get right child
+     */
+    @Override
+    public TreePrinter.PrintableNode getRight() {
+        return getRightChild();
+    }
+
+    /**
+     * Get text to be printed
+     */
+    @Override
+    public String getText() {
+        return String.valueOf(this.key);
     }
 }

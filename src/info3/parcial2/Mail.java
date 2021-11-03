@@ -73,4 +73,9 @@ class Mail {
     public Mail clone() {
         return new Mail(this.from, this.to, this.date, this.subject, this.content);
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(this.id);
+    }
 }

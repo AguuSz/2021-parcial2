@@ -117,11 +117,11 @@ public class MailManager {
      *
      */
     public void printDateTree() {
-        dateTree.print();
+        TreePrinter.print(dateTree.getRoot());
     }
 
     // ------------------------------------------ Developer functions ------------------------------------------
     public void printIdTree() {
-        idTree.print();
+        TreePrinter.print(idTree.getRoot());
     }
 }
