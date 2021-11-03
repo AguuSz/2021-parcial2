@@ -70,12 +70,20 @@ class Mail {
         this.content = content;
     }
 
+    @Override
     public Mail clone() {
         return new Mail(this.from, this.to, this.date, this.subject, this.content);
     }
 
     @Override
     public String toString() {
-        return String.valueOf(this.id);
+        return "Mail{" +
+                "id= " + id + + '\n' +
+                ", from= " + from + '\n' +
+                ", to= " + to + '\n' +
+                ", date= " + date + '\n' +
+               // ", subject='" + subject + '\n' +
+               // ", content='" + content + '\n' +
+                '}';
     }
 }

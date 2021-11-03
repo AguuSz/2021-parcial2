@@ -25,11 +25,11 @@ public class AVLTree<K extends Comparable<K>, T> {
         return applyRotation(node);
     }
 
-    public T get(K key) {
+    public Node<K, T> get(K key) {
         return get(key, root);
     }
 
-    private T get(K key, Node<K, T> node) {
+    private Node<K, T> get(K key, Node<K, T> node) {
         if (node == null) {
             return null;
         }
@@ -38,7 +38,7 @@ public class AVLTree<K extends Comparable<K>, T> {
         } else if (key.compareTo(node.getKey()) > 0) {
             return get(key, node.getRightChild());
         } else {
-            return node.getData();
+            return node;
         }
     }
 

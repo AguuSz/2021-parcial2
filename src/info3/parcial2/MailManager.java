@@ -2,6 +2,7 @@ package info3.parcial2;
 
 import info3.parcial2.Structures.AVLTree;
 import info3.parcial2.Structures.LinkedList;
+import info3.parcial2.Structures.LinkedNode;
 import info3.parcial2.Structures.Node;
 
 public class MailManager {
@@ -55,7 +56,7 @@ public class MailManager {
      * @param id identificador del mail a borrar
      */
     public void deleteMail(long id) {
-        Mail tempMail = idTree.get(id);
+        Mail tempMail = idTree.get(id).getData();
         idTree.delete(id);
         dateTree.delete(tempMail.getDate());
     }
@@ -66,22 +67,73 @@ public class MailManager {
      * @return lista de mails ordenados
      */
     public Mail[] getSortedByDate() {
+        LinkedList<Mail> mailList = new LinkedList<>();
+        getSortedByDate(dateTree.getRoot(), mailList);
+        Mail[] mails = new Mail[mailList.getSize()];
+        for(int i = 0; mailList.getSize() > 0; i++) {
+            mails[i] = mailList.get(0);
+            try {
+                mailList.delete(0);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+        return mails;
+    }
 
-        return new Mail[0];
+    private void getSortedByDate(Node<String, Mail> node, LinkedList<Mail> mailList) {
+        if(node == null) {
+            return;
+        }
+        getSortedByDate(node.getLeftChild(), mailList);
+        try {
+            mailList.add(node.getData());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        getSortedByDate(node.getRightChild(), mailList);
     }
 
     /**
      * Devuelve una lista de mails oredenados por fecha que estan en el rango
      * desde - hasta
      *
-     * @param desde Fecha desde donde buscar
-     * @param hasta Fecha hasta donde buscar
+     * @param from Fecha desde donde buscar
+     * @param to Fecha hasta donde buscar
      * @return lista de mails ord-enados
      */
-    public Mail[] getSortedByDate(String desde, String hasta) {
-        return new Mail[0];
+    public Mail[] getSortedByDate(String from, String to) {
+        LinkedList<Mail> mailList = new LinkedList<>();
+        getSortedByDate(dateTree.getRoot(), mailList, from, to);
+        Mail[] mails = new Mail[mailList.getSize()];
+        for(int i = 0; mailList.getSize() > 0; i++) {
+            mails[i] = mailList.get(0);
+            try {
+                mailList.delete(0);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+        return mails;
     }
 
+    private void getSortedByDate(Node<String, Mail> node, LinkedList<Mail> mailList, String from, String to) {
+        if (node == null){
+            return;
+        }
+
+        if(node.getData().getDate().compareTo(from) > 0)
+            getSortedByDate(node.getLeftChild(), mailList, from, to);
+        if(node.getData().getDate().compareTo(from) > 0 && node.getData().getDate().compareTo(to) < 0)
+        try {
+            mailList.add(node.getData());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        if(node.getData().getDate().compareTo(to) < 0)
+        getSortedByDate(node.getRightChild(), mailList, from, to);
+
+    }
     /**
      * Devuelve una lista de mails ordenados por Remitente
      *

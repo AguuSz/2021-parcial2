@@ -20,10 +20,11 @@ public class Main {
             System.out.println("***************** Que desea hacer? *****************");
             System.out.println("\t1) Agregar mails al gestor.");
             System.out.println("\t2) Borrar mails del gestor.");
-            System.out.println("\t3) Filtrar mails por fecha.");
-            System.out.println("\t4) Filtrar por remitente.");
-            System.out.println("\t5) Mostrar mails ordenados por remitente.");
-            System.out.println("\t6) Filtrar mails por palabras o asunto.");
+            System.out.println("\t3) Mostrar mails ordenados por fecha.");
+            System.out.println("\t4) Filtrar mails por fecha.");
+            System.out.println("\t5) Filtrar por remitente.");
+            System.out.println("\t6) Mostrar mails ordenados por remitente.");
+            System.out.println("\t7) Filtrar mails por palabras o asunto.");
             System.out.println("\t0) Salir.");
 
             System.out.println("\t9) Imprimir arbol.");
@@ -43,12 +44,15 @@ public class Main {
                     getSortedByDate();
                     break;
                 case 4:
-                    getByFrom();
+                    getSortedByDateSegmented();
                     break;
                 case 5:
-                    getSortedByFrom();
+                    getByFrom();
                     break;
                 case 6:
+                    getSortedByFrom();
+                    break;
+                case 7:
                     getByQuery();
                     break;
                 case 0:
@@ -105,8 +109,25 @@ public class Main {
         }
         manager.deleteMail(id);
     }
+    private static void getSortedByDate() {
+        Mail[] mails = manager.getSortedByDate();
+        for (Mail i : mails) {
+            System.out.println(i);
+        }
+    }
+    private static void getSortedByDateSegmented() {
+        Scanner scanner = new Scanner(System.in);
 
-    private static void getSortedByDate() {}
+        System.out.print("Ingrese fecha desde donde buscar: ");
+        String from = scanner.nextLine();
+
+        System.out.print("Ingrese fecha hast donde buscar: ");
+        String to = scanner.nextLine();
+
+        for(Mail i : manager.getSortedByDate(from, to)){
+            System.out.println(i);
+        }
+    }
 
     private static void getByFrom() {}
 
