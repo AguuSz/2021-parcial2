@@ -2,12 +2,12 @@ package info3.parcial2;
 
 import info3.parcial2.Structures.AVLTree;
 import info3.parcial2.Structures.LinkedList;
-import info3.parcial2.Structures.LinkedNode;
 import info3.parcial2.Structures.Node;
 
 public class MailManager {
-    private final AVLTree<String, Mail> dateTree    = new AVLTree<>();
-    private final AVLTree<Long, Mail>   idTree      = new AVLTree<>();
+    private final AVLTree<String, Mail>             dateTree    = new AVLTree<>();
+    private final AVLTree<Long, Mail>               idTree      = new AVLTree<>();
+    private final AVLTree<String, LinkedList<Mail>> fromTree    = new AVLTree<>();
     private long lastIdIntroduced = 0;
 
     public MailManager() {
@@ -23,8 +23,11 @@ public class MailManager {
         setLastIdIntroduced(mailList.getSize());
 
         for (int i = 0; i < mailList.getSize(); i++) {
-            dateTree.insert(mailList.get(i).getDate(), mailList.get(i));
-            idTree.insert(mailList.get(i).getId(), mailList.get(i));
+            Mail mail = mailList.get(i);
+            dateTree.insert(mail.getDate(), mail);
+            idTree.insert(mail.getId(), mail);
+            String from = mail.getFrom();
+            insertIntoLinkedList(fromTree, from, mail);
         }
     }
 
@@ -36,6 +39,7 @@ public class MailManager {
     public void addMail(Mail m) {
         dateTree.insert(m.getDate(), m);
         idTree.insert(m.getId(), m);
+        insertIntoLinkedList(fromTree, m.getFrom(), m);
         // TODO: Faltan agregar las demas estructuras
 
         lastIdIntroduced++;
@@ -59,6 +63,7 @@ public class MailManager {
         Mail tempMail = idTree.get(id).getData();
         idTree.delete(id);
         dateTree.delete(tempMail.getDate());
+        deleteFromLinkedList(fromTree, tempMail.getFrom(), id);
     }
 
     /**
@@ -172,6 +177,41 @@ public class MailManager {
         TreePrinter.print(dateTree.getRoot());
     }
 
+    /**
+     * Inserta un dato en una lista enlazada dentro de una estructura en caso de que exista
+     * Caso contrario crea la lista y luego inserta el dato
+     *
+     * @param tree AVLTree donde se va a insertar el dato
+     * @param key String clave donde guardar el dato
+     * @param data Mail que se va a insertar
+     */
+    private void insertIntoLinkedList(AVLTree<String, LinkedList<Mail>> tree, String key, Mail data) {
+        try {
+            if (tree.get(key) == null) {
+                tree.insert(key, new LinkedList<Mail>());
+                tree.get(key).getData().add(data);
+            } else {
+                tree.get(key).getData().add(data);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    private void deleteFromLinkedList(AVLTree<String, LinkedList<Mail>> tree, String key, long id) {
+        try {
+            if (tree.get(key) != null || tree.get(key).getData().getSize() > 0)
+                tree.get(key).getData().delete(findMailPos(tree.get(key).getData(), id));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    private Integer findMailPos (LinkedList<Mail> mailList, long id) {
+        for(int i = 0; i < mailList.getSize(); i++) {
+            if(mailList.get(i).getId() == id)
+                return i;
+        }
+        return null;
+    }
     // ------------------------------------------ Developer functions ------------------------------------------
     public void printIdTree() {
         TreePrinter.print(idTree.getRoot());

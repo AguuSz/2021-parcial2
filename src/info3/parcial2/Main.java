@@ -121,7 +121,7 @@ public class Main {
         System.out.print("Ingrese fecha desde donde buscar: ");
         String from = scanner.nextLine();
 
-        System.out.print("Ingrese fecha hast donde buscar: ");
+        System.out.print("Ingrese fecha hasta donde buscar: ");
         String to = scanner.nextLine();
 
         for(Mail i : manager.getSortedByDate(from, to)){
