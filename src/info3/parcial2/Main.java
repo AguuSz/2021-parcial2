@@ -132,9 +132,20 @@ public class Main {
     }
 
     private static void getByFrom() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Ingrese el remitente que busca: ");
+        String from = scanner.nextLine();
+
+        for(Mail i : manager.getByFrom(from)) {
+            System.out.println(i);
+        }
     }
 
     private static void getSortedByFrom() {
+        for(Mail i : manager.getSortedByFrom()) {
+            System.out.println(i);
+        }
     }
 
     private static void getByQuery() {

@@ -2,6 +2,7 @@ package info3.parcial2;
 
 import info3.parcial2.Structures.AVLTree;
 import info3.parcial2.Structures.LinkedList;
+import info3.parcial2.Structures.Node;
 
 public class MailManager {
     private final AVLTree<String, Mail> dateTree = new AVLTree<>();
@@ -95,8 +96,23 @@ public class MailManager {
      * @return lista de mails ordenados
      */
     public Mail[] getSortedByFrom() {
-        LinkedList<Mail> mails = new LinkedList<>();
-        return new Mail[0];
+        LinkedList<LinkedList<Mail>> mailListList = fromTree.getSorteredInOrderList();
+        LinkedList<Mail> mailList = new LinkedList<>();
+        for(LinkedList<Mail> i : mailListList) {
+            for(Mail j : i) {
+                try {
+                    mailList.add(j);
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+        }
+        Mail[] mails = new Mail[mailList.getSize()];
+        int contador = 0;
+        for(Mail i : mailList) {
+            mails[contador++] = i;
+        }
+        return mails;
     }
 
     /**
@@ -106,7 +122,13 @@ public class MailManager {
      * @return lista de mails del remitente
      */
     public Mail[] getByFrom(String from) {
-        return new Mail[0];
+        Node<String, LinkedList<Mail>> mailList = fromTree.get(from);
+        Mail[] mails = new Mail[mailList.getData().getSize()];
+        int contador = 0;
+        for(Mail i : mailList.getData()) {
+            mails[contador++] = i;
+        }
+        return mails;
     }
 
     /**
