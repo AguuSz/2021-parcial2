@@ -1,9 +1,10 @@
 package info3.parcial2.Structures;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Optional;
+import java.util.List;
 
-public class LinkedList<AnyType> {
+public class LinkedList<AnyType> implements Iterable<AnyType> {
     private LinkedNode<AnyType> begin;
     private int size;
 
@@ -99,23 +100,42 @@ public class LinkedList<AnyType> {
         return aux;
     }
 
+    public Object[] toObjectArray() {
+        List<AnyType> array = new ArrayList<>(size);
 
-    public void moverSiguiente(AnyType d) {
-        LinkedNode<AnyType> aux = begin;
-
-
-        while (aux.next != null && !aux.next.data.equals(d)) {
-            aux = aux.next;
+        for (AnyType item : this) {
+            array.add(item);
         }
 
-        LinkedNode<AnyType> ant = aux;
-        LinkedNode<AnyType> dato = aux.next;
-        LinkedNode<AnyType> sig = aux.next.next;
+        return array.toArray();
+    }
 
-        ant.next = sig;
-        if(sig != null) {
-            dato.next = sig.next;
-            sig.next = dato;
-        }
+    // Overrides de Iterable
+    @Override
+    public Iterator<AnyType> iterator() {
+        return new Iterator<AnyType>() {
+
+            LinkedNode<AnyType> current = begin;
+
+            @Override
+            public boolean hasNext() {
+                return current != null;
+            }
+
+            @Override
+            public AnyType next() {
+                if (hasNext()) {
+                    AnyType data = current.data;
+                    current = current.next;
+                    return data;
+                }
+                return null;
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Remove not implemented");
+            }
+        };
     }
 }

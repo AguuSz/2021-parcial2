@@ -1,6 +1,5 @@
 package info3.parcial2;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
@@ -72,6 +71,7 @@ public class Main {
         Mail tempMail = new Mail();
         Scanner scanner = new Scanner(System.in);
 
+
         // Obtiene la ultima ID e incrementa en uno para setearselo al correo temporal
         tempMail.setId(manager.getLastIdIntroduced() + 1);
 
@@ -109,12 +109,14 @@ public class Main {
         }
         manager.deleteMail(id);
     }
+
     private static void getSortedByDate() {
         Mail[] mails = manager.getSortedByDate();
         for (Mail i : mails) {
             System.out.println(i);
         }
     }
+
     private static void getSortedByDateSegmented() {
         Scanner scanner = new Scanner(System.in);
 
@@ -124,14 +126,17 @@ public class Main {
         System.out.print("Ingrese fecha hasta donde buscar: ");
         String to = scanner.nextLine();
 
-        for(Mail i : manager.getSortedByDate(from, to)){
+        for (Mail i : manager.getSortedByDate(from, to)) {
             System.out.println(i);
         }
     }
 
-    private static void getByFrom() {}
+    private static void getByFrom() {
+    }
 
-    private static void getSortedByFrom() {}
+    private static void getSortedByFrom() {
+    }
 
-    private static void getByQuery() {}
+    private static void getByQuery() {
+    }
 }

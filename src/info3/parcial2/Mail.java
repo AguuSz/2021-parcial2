@@ -12,7 +12,8 @@ class Mail {
     private String subject; // Asunto del mail
     private String content; // Contenido del mail.
 
-    public Mail() {}
+    public Mail() {
+    }
 
     public Mail(String from, String to, String date, String subject, String content) {
         this.from = from;
@@ -78,12 +79,12 @@ class Mail {
     @Override
     public String toString() {
         return "Mail{" +
-                "id= " + id + + '\n' +
+                "id= " + id + '\n' +
                 ", from= " + from + '\n' +
                 ", to= " + to + '\n' +
                 ", date= " + date + '\n' +
-               // ", subject='" + subject + '\n' +
-               // ", content='" + content + '\n' +
+                // ", subject='" + subject + '\n' +
+                // ", content='" + content + '\n' +
                 '}';
     }
 }

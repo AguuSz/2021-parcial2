@@ -3,7 +3,8 @@ package info3.parcial2.Structures;
 public class AVLTree<K extends Comparable<K>, T> {
     private Node<K, T> root;
 
-    public AVLTree() {}
+    public AVLTree() {
+    }
 
     public AVLTree<K, T> insert(K key, T data) {
         root = insert(key, data, root);
@@ -122,18 +123,98 @@ public class AVLTree<K extends Comparable<K>, T> {
         node.setHeight(maxHeight + 1);
     }
 
-    private int height (Node<K, T> node) {
+    private int height(Node<K, T> node) {
         return node != null ? node.getHeight() : 0;
     }
 
-    public void traverse() {
-        traverseInOrder(root);
+    /**
+     * Devolver una lista enlazada con los datos del arbol utilizando el criterio "In Order".
+     *
+     * @return lista de mails ordenados in order
+     */
+    public LinkedList<T> getSorteredInOrderList() {
+        LinkedList<T> list = new LinkedList<>();
+        getInOrder(this.root, list);
+        return list;
     }
-    private void traverseInOrder(Node<K, T> node) {
-        if (node != null) {
-            traverseInOrder(node.getLeftChild());
-            traverseInOrder(node.getRightChild());
+
+    /**
+     * Devolver una lista enlazada con los datos del arbol utilizando el criterio "In Order", pero que ademas este filtrando desde un parametro "from" hasta un "to".
+     *
+     * @param from inicio del filtrado
+     * @param to   fin del filtrado
+     * @return lista de mails ordenados in order filtrados
+     */
+    public LinkedList<T> getInorderedSegmentedList(K from, K to) {
+        LinkedList<T> list = new LinkedList<>();
+        getInOrderedSegmented(this.root, list, from, to);
+        return list;
+    }
+
+    /* Given a binary tree, print its nodes in inorder*/
+    private void getInOrderedSegmented(Node<K, T> node, LinkedList<T> list, K from, K to) {
+        if (node == null)
+            return;
+
+        /* first recur on left child */
+        if (node.getKey().compareTo(from) > 0)
+            getInOrderedSegmented(node.getLeftChild(), list, from, to);
+
+        /* then print the data of node */
+        if (node.getKey().compareTo(from) > 0 && node.getKey().compareTo(to) < 0)
+            try {
+                list.add(node.getData());
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
+        /* now recur on right child */
+        if (node.getKey().compareTo(to) < 0)
+            getInOrderedSegmented(node.getRightChild(), list, from, to);
+    }
+
+    private void getPostOrder(Node<K, T> node, LinkedList<T> list) {
+        if (node == null)
+            return;
+
+        getPostOrder(node.getLeftChild(), list);
+        getPostOrder(node.getRightChild(), list);
+
+        try {
+            list.add(node.getData());
+        } catch (Exception e) {
+            System.out.println(e);
         }
+    }
+
+    private void getInOrder(Node<K, T> node, LinkedList<T> list) {
+        if (node == null)
+            return;
+
+        getInOrder(node.getLeftChild(), list);
+
+        // Agregarlo a la lista
+        try {
+            list.add(node.getData());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        getInOrder(node.getRightChild(), list);
+    }
+
+    private void getPreOrder(Node<K, T> node, LinkedList<T> list) {
+        if (node == null)
+            return;
+
+        try {
+            list.add(node.getData());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        getPreOrder(node.getLeftChild(), list);
+        getPreOrder(node.getRightChild(), list);
     }
 
     public Node<K, T> getMax() {
@@ -142,6 +223,7 @@ public class AVLTree<K extends Comparable<K>, T> {
         }
         return getMax(root);
     }
+
     private Node<K, T> getMax(Node<K, T> node) {
         if (node.getRightChild() != null) {
             return getMax(node.getRightChild());
@@ -155,6 +237,7 @@ public class AVLTree<K extends Comparable<K>, T> {
         }
         return getMin(root);
     }
+
     public Node<K, T> getMin(Node<K, T> node) {
         if (node.getLeftChild() != null) {
             return getMin(node.getLeftChild());
@@ -168,14 +251,14 @@ public class AVLTree<K extends Comparable<K>, T> {
 
     /**
      * Internal method to print a subtree in sorted order.
+     *
      * @param t the node that roots the tree.
      */
-    private void printTree( Node<K, T> t ) {
-        if( t != null )
-        {
-            printTree( t.getLeftChild());
-            System.out.println( t.getKey() );
-            printTree( t.getRightChild() );
+    private void printTree(Node<K, T> t) {
+        if (t != null) {
+            printTree(t.getLeftChild());
+            System.out.println(t.getKey());
+            printTree(t.getRightChild());
         }
     }
 

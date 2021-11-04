@@ -2,12 +2,11 @@ package info3.parcial2;
 
 import info3.parcial2.Structures.AVLTree;
 import info3.parcial2.Structures.LinkedList;
-import info3.parcial2.Structures.Node;
 
 public class MailManager {
-    private final AVLTree<String, Mail>             dateTree    = new AVLTree<>();
-    private final AVLTree<Long, Mail>               idTree      = new AVLTree<>();
-    private final AVLTree<String, LinkedList<Mail>> fromTree    = new AVLTree<>();
+    private final AVLTree<String, Mail> dateTree = new AVLTree<>();
+    private final AVLTree<Long, Mail> idTree = new AVLTree<>();
+    private final AVLTree<String, LinkedList<Mail>> fromTree = new AVLTree<>();
     private long lastIdIntroduced = 0;
 
     public MailManager() {
@@ -16,7 +15,6 @@ public class MailManager {
 
     /**
      * Carga las estructuras del mailManager con los datos correspondientes.
-     *
      */
     private void loadStructures() {
         LinkedList<Mail> mailList = MailParser.parseFromFile("src/info3/emails/mails-20.txt");
@@ -72,31 +70,10 @@ public class MailManager {
      * @return lista de mails ordenados
      */
     public Mail[] getSortedByDate() {
-        LinkedList<Mail> mailList = new LinkedList<>();
-        getSortedByDate(dateTree.getRoot(), mailList);
-        Mail[] mails = new Mail[mailList.getSize()];
-        for(int i = 0; mailList.getSize() > 0; i++) {
-            mails[i] = mailList.get(0);
-            try {
-                mailList.delete(0);
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-        }
-        return mails;
-    }
+        LinkedList<Mail> mailList = dateTree.getSorteredInOrderList();
+        Object[] objects = mailList.toObjectArray();
 
-    private void getSortedByDate(Node<String, Mail> node, LinkedList<Mail> mailList) {
-        if(node == null) {
-            return;
-        }
-        getSortedByDate(node.getLeftChild(), mailList);
-        try {
-            mailList.add(node.getData());
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        getSortedByDate(node.getRightChild(), mailList);
+        return toEmailArray(objects, mailList.getSize());
     }
 
     /**
@@ -104,47 +81,21 @@ public class MailManager {
      * desde - hasta
      *
      * @param from Fecha desde donde buscar
-     * @param to Fecha hasta donde buscar
+     * @param to   Fecha hasta donde buscar
      * @return lista de mails ord-enados
      */
     public Mail[] getSortedByDate(String from, String to) {
-        LinkedList<Mail> mailList = new LinkedList<>();
-        getSortedByDate(dateTree.getRoot(), mailList, from, to);
-        Mail[] mails = new Mail[mailList.getSize()];
-        for(int i = 0; mailList.getSize() > 0; i++) {
-            mails[i] = mailList.get(0);
-            try {
-                mailList.delete(0);
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-        }
-        return mails;
+        LinkedList<Mail> mailList = dateTree.getInorderedSegmentedList(from, to);
+        return toEmailArray(mailList.toObjectArray(), mailList.getSize());
     }
 
-    private void getSortedByDate(Node<String, Mail> node, LinkedList<Mail> mailList, String from, String to) {
-        if (node == null){
-            return;
-        }
-
-        if(node.getData().getDate().compareTo(from) > 0)
-            getSortedByDate(node.getLeftChild(), mailList, from, to);
-        if(node.getData().getDate().compareTo(from) > 0 && node.getData().getDate().compareTo(to) < 0)
-        try {
-            mailList.add(node.getData());
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        if(node.getData().getDate().compareTo(to) < 0)
-        getSortedByDate(node.getRightChild(), mailList, from, to);
-
-    }
     /**
      * Devuelve una lista de mails ordenados por Remitente
      *
      * @return lista de mails ordenados
      */
     public Mail[] getSortedByFrom() {
+        LinkedList<Mail> mails = new LinkedList<>();
         return new Mail[0];
     }
 
@@ -171,7 +122,6 @@ public class MailManager {
 
     /**
      * Imprime el arbol ordenado por fecha
-     *
      */
     public void printDateTree() {
         TreePrinter.print(dateTree.getRoot());
@@ -182,7 +132,7 @@ public class MailManager {
      * Caso contrario crea la lista y luego inserta el dato
      *
      * @param tree AVLTree donde se va a insertar el dato
-     * @param key String clave donde guardar el dato
+     * @param key  String clave donde guardar el dato
      * @param data Mail que se va a insertar
      */
     private void insertIntoLinkedList(AVLTree<String, LinkedList<Mail>> tree, String key, Mail data) {
@@ -197,6 +147,7 @@ public class MailManager {
             System.out.println(e);
         }
     }
+
     private void deleteFromLinkedList(AVLTree<String, LinkedList<Mail>> tree, String key, long id) {
         try {
             if (tree.get(key) != null || tree.get(key).getData().getSize() > 0)
@@ -205,15 +156,30 @@ public class MailManager {
             System.out.println(e);
         }
     }
-    private Integer findMailPos (LinkedList<Mail> mailList, long id) {
-        for(int i = 0; i < mailList.getSize(); i++) {
-            if(mailList.get(i).getId() == id)
+
+    private Integer findMailPos(LinkedList<Mail> mailList, long id) {
+        for (int i = 0; i < mailList.getSize(); i++) {
+            if (mailList.get(i).getId() == id)
                 return i;
         }
         return null;
     }
+
+    private Mail[] toEmailArray(Object[] objects, int size) {
+        Mail[] mailArray = new Mail[size];
+        int i = 0;
+        for (Object o : objects) {
+            mailArray[i++] = (Mail) o;
+        }
+        return mailArray;
+    }
+
     // ------------------------------------------ Developer functions ------------------------------------------
     public void printIdTree() {
         TreePrinter.print(idTree.getRoot());
+    }
+
+    public void printFromTree() {
+        TreePrinter.print(fromTree.getRoot());
     }
 }
