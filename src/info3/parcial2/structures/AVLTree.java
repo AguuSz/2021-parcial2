@@ -1,4 +1,4 @@
-package info3.parcial2.Structures;
+package info3.parcial2.structures;
 
 public class AVLTree<K extends Comparable<K>, T> {
     private Node<K, T> root;

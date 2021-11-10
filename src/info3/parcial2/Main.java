@@ -1,7 +1,13 @@
 package info3.parcial2;
 
+import info3.parcial2.models.Mail;
+import info3.parcial2.utils.Validator;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
@@ -20,10 +26,11 @@ public class Main {
             System.out.println("\t1) Agregar mails al gestor.");
             System.out.println("\t2) Borrar mails del gestor.");
             System.out.println("\t3) Mostrar mails ordenados por fecha.");
-            System.out.println("\t4) Filtrar mails por fecha.");
+            System.out.println("\t4) Filtrar mails por un rango de fecha.");
             System.out.println("\t5) Filtrar por remitente.");
             System.out.println("\t6) Mostrar mails ordenados por remitente.");
             System.out.println("\t7) Filtrar mails por palabras o asunto.");
+            System.out.println("\t8) Buscar un correo por ID.");
             System.out.println("\t0) Salir.");
 
             System.out.println("\t9) Imprimir arbol.");
@@ -54,6 +61,9 @@ public class Main {
                 case 7:
                     getByQuery();
                     break;
+                case 8:
+                    getDetailedEmail();
+                    break;
                 case 0:
                     exit = true;
                     break;
@@ -71,12 +81,18 @@ public class Main {
         Mail tempMail = new Mail();
         Scanner scanner = new Scanner(System.in);
 
-
         // Obtiene la ultima ID e incrementa en uno para setearselo al correo temporal
         tempMail.setId(manager.getLastIdIntroduced() + 1);
 
-        System.out.print("Remitente: ");
-        tempMail.setFrom(scanner.nextLine());
+        while (true) {
+            System.out.print("Remitente: ");
+            String temp = scanner.nextLine();
+            if (Validator.isAValidEmailAddress(temp)) {
+                tempMail.setFrom(temp);
+                break;
+            } else
+                System.out.println("Input invalido, intente de nuevo.");
+        }
 
         tempMail.setDate(getTodayDateFormatted());
 
@@ -111,23 +127,52 @@ public class Main {
     }
 
     private static void getSortedByDate() {
-        Mail[] mails = manager.getSortedByDate();
-        for (Mail i : mails) {
-            System.out.println(i);
+        try {
+            Mail[] mails = manager.getSortedByDate();
+            for (Mail i : mails) {
+                System.out.println(i);
+            }
+        } catch (Exception e) {
+            System.out.println("No hay correos cargados.");
         }
     }
 
     private static void getSortedByDateSegmented() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Ingrese fecha desde donde buscar: ");
+        System.out.print("Ingrese fecha desde donde buscar (YYYY-MM-dd): ");
         String from = scanner.nextLine();
+        while (!isAValidDate(from)) {
+            System.out.println("Fecha invalida, intentelo de nuevo.");
+            System.out.print("Ingrese fecha desde donde buscar (YYYY-MM-dd): ");
+            from = scanner.nextLine();
+        }
 
-        System.out.print("Ingrese fecha hasta donde buscar: ");
+        System.out.print("Ingrese fecha hasta donde buscar (YYYY-MM-dd): ");
         String to = scanner.nextLine();
+        while (!isAValidDate(from)) {
+            System.out.println("Fecha invalida, intentelo de nuevo.");
+            System.out.print("Ingrese fecha desde donde buscar (YYYY-MM-dd): ");
+            to = scanner.nextLine();
+        }
 
-        for (Mail i : manager.getSortedByDate(from, to)) {
-            System.out.println(i);
+        try {
+            for (Mail i : manager.getSortedByDate(from, to)) {
+                System.out.println(i);
+            }
+        } catch (Exception e) {
+            System.out.println("No se han encontrado correos.");
+        }
+
+    }
+
+    private static boolean isAValidDate(String input) {
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            format.parse(input);
+            return true;
+        } catch (ParseException e) {
+            return false;
         }
     }
 
@@ -135,19 +180,55 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Ingrese el remitente que busca: ");
-        String from = scanner.nextLine();
 
-        for(Mail i : manager.getByFrom(from)) {
-            System.out.println(i);
+        try {
+            String from = scanner.nextLine();
+            for (Mail i : manager.getByFrom(from)) {
+                System.out.println(i);
+            }
+        } catch (NullPointerException e) {
+            System.out.println("\nNo se ha encontrado ningun correo con ese remitente....");
+        } catch (Exception e) {
+            System.out.println("Se ha producido un error.");
         }
     }
 
     private static void getSortedByFrom() {
-        for(Mail i : manager.getSortedByFrom()) {
-            System.out.println(i);
+        try {
+            for (Mail i : manager.getSortedByFrom()) {
+                System.out.println(i);
+            }
+        } catch (NullPointerException e) {
+            System.out.println("\nNo se ha encontrado ningun correo....");
+        } catch (Exception e) {
+            System.out.println("Se ha producido un error.");
         }
     }
 
     private static void getByQuery() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Ingrese la palabra a buscar: ");
+        String contentSearch = scanner.nextLine();
+
+        Mail[] mailArray = manager.getByQuery(contentSearch);
+        System.out.println(mailArray.length);
+    }
+
+    private static void getDetailedEmail() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Ingrese el ID a buscar: ");
+
+        try {
+            Long id = scanner.nextLong();
+            System.out.println(manager.getById(id).getFullInfo());
+        } catch (NullPointerException e) {
+            System.out.println("\nNo se ha encontrado ningun correo con ese ID....");
+        } catch (InputMismatchException inputMismatchException) {
+            System.out.println("Solo se permiten IDs numericos. Intente de nuevo.\n");
+        } catch (Exception e) {
+            System.out.println("Se ha producido un error.");
+        }
     }
 }

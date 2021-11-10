@@ -1,6 +1,7 @@
-package info3.parcial2;
+package info3.parcial2.utils;
 
-import info3.parcial2.Structures.LinkedList;
+import info3.parcial2.models.Mail;
+import info3.parcial2.structures.LinkedList;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -30,8 +31,7 @@ public class MailParser {
                     mail.setId(++counter);
                     mailList.add(mail);
                     content = "";
-                }
-                else if (str.contains("date: "))
+                } else if (str.contains("date: "))
                     mailTemp.setDate(str.substring(6));
 
                 else if (str.contains("from: "))

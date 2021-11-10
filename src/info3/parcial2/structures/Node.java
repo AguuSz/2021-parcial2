@@ -1,6 +1,6 @@
-package info3.parcial2.Structures;
+package info3.parcial2.structures;
 
-import info3.parcial2.TreePrinter;
+import info3.parcial2.utils.TreePrinter;
 
 public class Node<K extends Comparable<K>, T> implements TreePrinter.PrintableNode {
     private T data;

@@ -1,33 +1,69 @@
 package info3.parcial2;
 
-import info3.parcial2.Structures.AVLTree;
-import info3.parcial2.Structures.LinkedList;
-import info3.parcial2.Structures.Node;
+import info3.parcial2.models.Mail;
+import info3.parcial2.structures.AVLTree;
+import info3.parcial2.structures.HashMap;
+import info3.parcial2.structures.LinkedList;
+import info3.parcial2.structures.Node;
+import info3.parcial2.utils.MailParser;
+import info3.parcial2.utils.TreePrinter;
 
 public class MailManager {
     private final AVLTree<String, Mail> dateTree = new AVLTree<>();
     private final AVLTree<Long, Mail> idTree = new AVLTree<>();
     private final AVLTree<String, LinkedList<Mail>> fromTree = new AVLTree<>();
+    private final HashMap<String, LinkedList<Mail>> queryMap = new HashMap<>();
+    private final HashMap<String, LinkedList<Mail>> subjectMap = new HashMap<>();
+
     private long lastIdIntroduced = 0;
 
     public MailManager() {
-        loadStructures();
+        try {
+            loadStructures();
+        } catch (Exception e) {
+            System.out.println("Error al cargar las estructuras.");
+        }
     }
 
     /**
      * Carga las estructuras del mailManager con los datos correspondientes.
      */
-    private void loadStructures() {
-        LinkedList<Mail> mailList = MailParser.parseFromFile("src/info3/emails/mails-20.txt");
+    private void loadStructures() throws Exception {
+        long startTime = System.currentTimeMillis();
+        LinkedList<Mail> mailList = MailParser.parseFromFile("src/info3/emails/mails-1000.txt");
         setLastIdIntroduced(mailList.getSize());
 
-        for (int i = 0; i < mailList.getSize(); i++) {
-            Mail mail = mailList.get(i);
+        for (Mail mail : mailList) {
+            String[] content = mail.getContent().split(" ");
+            String[] subjectWords = mail.getSubject().split(" ");
+
+            for (String contentWord : content) {
+                // Llenamos el queryMap
+                try {
+                    queryMap.put(contentWord, new LinkedList<Mail>());
+                    queryMap.get(contentWord).add(mail);
+                } catch (Exception e) {
+                    queryMap.get(contentWord).add(mail);
+                }
+            }
+            for (String subjectWord : subjectWords) {
+                // Llenamos el queryMap
+                try {
+                    subjectMap.put(subjectWord, new LinkedList<Mail>());
+                    subjectMap.get(subjectWord).add(mail);
+                } catch (Exception e) {
+                    subjectMap.get(subjectWord).add(mail);
+                }
+            }
+
             dateTree.insert(mail.getDate(), mail);
             idTree.insert(mail.getId(), mail);
-            String from = mail.getFrom();
-            insertIntoLinkedList(fromTree, from, mail);
+            insertIntoLinkedList(fromTree, mail.getFrom(), mail);
         }
+        long endTime = System.currentTimeMillis();
+        long timeElapsed = endTime - startTime;
+
+        System.out.println("Execution time in milliseconds: " + timeElapsed);
     }
 
     /**
@@ -39,10 +75,15 @@ public class MailManager {
         dateTree.insert(m.getDate(), m);
         idTree.insert(m.getId(), m);
         insertIntoLinkedList(fromTree, m.getFrom(), m);
+        insertContentIntoHashTable(m);
         // TODO: Faltan agregar las demas estructuras
 
         lastIdIntroduced++;
-        System.out.println("Se ha agregado correctamente!");
+        System.out.println("\nSe ha agregado correctamente!");
+    }
+
+    private void insertContentIntoHashTable(Mail m) {
+        String[] content = m.getContent().split(" ");
     }
 
     public long getLastIdIntroduced() {
@@ -59,10 +100,14 @@ public class MailManager {
      * @param id identificador del mail a borrar
      */
     public void deleteMail(long id) {
-        Mail tempMail = idTree.get(id).getData();
-        idTree.delete(id);
-        dateTree.delete(tempMail.getDate());
-        deleteFromLinkedList(fromTree, tempMail.getFrom(), id);
+        try {
+            Mail tempMail = idTree.get(id).getData();
+            idTree.delete(id);
+            dateTree.delete(tempMail.getDate());
+            deleteFromLinkedList(fromTree, tempMail.getFrom(), id);
+        } catch (NullPointerException e) {
+            System.out.println("\nNo se ha encontrado el mail con dicho ID.");
+        }
     }
 
     /**
@@ -98,8 +143,8 @@ public class MailManager {
     public Mail[] getSortedByFrom() {
         LinkedList<LinkedList<Mail>> mailListList = fromTree.getSorteredInOrderList();
         LinkedList<Mail> mailList = new LinkedList<>();
-        for(LinkedList<Mail> i : mailListList) {
-            for(Mail j : i) {
+        for (LinkedList<Mail> i : mailListList) {
+            for (Mail j : i) {
                 try {
                     mailList.add(j);
                 } catch (Exception e) {
@@ -109,7 +154,7 @@ public class MailManager {
         }
         Mail[] mails = new Mail[mailList.getSize()];
         int contador = 0;
-        for(Mail i : mailList) {
+        for (Mail i : mailList) {
             mails[contador++] = i;
         }
         return mails;
@@ -125,7 +170,7 @@ public class MailManager {
         Node<String, LinkedList<Mail>> mailList = fromTree.get(from);
         Mail[] mails = new Mail[mailList.getData().getSize()];
         int contador = 0;
-        for(Mail i : mailList.getData()) {
+        for (Mail i : mailList.getData()) {
             mails[contador++] = i;
         }
         return mails;
@@ -139,7 +184,27 @@ public class MailManager {
      * @return lista de mails que contienen dicha/s palabra/s
      */
     public Mail[] getByQuery(String query) {
-        return new Mail[0];
+        try {
+            LinkedList<Mail> list = queryMap.get(query);
+            return toEmailArray(list.toObjectArray(), list.getSize());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Devuelve un correo con el ID asociado
+     *
+     * @param id Long con la id del correo a buscar
+     * @return si lo encuentra retorna el correo con el id asociado. Caso contrario, retorna null
+     */
+    public Mail getById(Long id) {
+        Node<Long, Mail> mailNode = idTree.get(id);
+        if (mailNode.getData() != null) {
+            return mailNode.getData();
+        }
+        return null;
     }
 
     /**

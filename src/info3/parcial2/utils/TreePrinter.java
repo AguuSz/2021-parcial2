@@ -1,21 +1,28 @@
-package info3.parcial2;
+package info3.parcial2.utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TreePrinter {
-    /** Node that can be printed */
-    public interface PrintableNode
-    {
-        /** Get left child */
+    /**
+     * Node that can be printed
+     */
+    public interface PrintableNode {
+        /**
+         * Get left child
+         */
         PrintableNode getLeft();
 
 
-        /** Get right child */
+        /**
+         * Get right child
+         */
         PrintableNode getRight();
 
 
-        /** Get text to be printed */
+        /**
+         * Get text to be printed
+         */
         String getText();
     }
 
@@ -23,11 +30,9 @@ public class TreePrinter {
     /**
      * Print a tree
      *
-     * @param root
-     *            tree root node
+     * @param root tree root node
      */
-    public static void print(PrintableNode root)
-    {
+    public static void print(PrintableNode root) {
         List<List<String>> lines = new ArrayList<List<String>>();
 
         List<PrintableNode> level = new ArrayList<PrintableNode>();

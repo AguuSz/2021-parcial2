@@ -1,9 +1,9 @@
-package info3.parcial2;
+package info3.parcial2.models;
 
 /**
  * Clase con los datos de un email. Puede tener mas propiedades o metodos
  */
-class Mail {
+public class Mail {
 
     private long id;
     private String from;    // Remitente del mail
@@ -78,13 +78,23 @@ class Mail {
 
     @Override
     public String toString() {
-        return "Mail{" +
-                "id= " + id + '\n' +
-                ", from= " + from + '\n' +
-                ", to= " + to + '\n' +
-                ", date= " + date + '\n' +
-                // ", subject='" + subject + '\n' +
-                // ", content='" + content + '\n' +
-                '}';
+        return
+                "--------------------------------------" + '\n' +
+                        "* ID: " + id + "\t\t" + '\n' +
+                        "* From: " + this.from + "\t\t" + '\n' +
+                        "* To: " + this.to + "\t\t" + '\n' +
+                        "* Date: " + this.date + "\t\t" + '\n' +
+                        "--------------------------------------" + '\n';
+    }
+
+    public String getFullInfo() {
+        return
+                "--------------------------------------" + '\n' +
+                        "* ID: " + id + "\t\t" + '\n' +
+                        "* From: " + this.from + "\t\t" + '\n' +
+                        "* To: " + this.to + "\t\t" + '\n' +
+                        "* Date: " + this.date + "\t\t" + '\n' +
+                        "* Content: " + this.content + '\n' +
+                        "--------------------------------------" + '\n';
     }
 }
