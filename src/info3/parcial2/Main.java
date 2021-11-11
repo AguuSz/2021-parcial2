@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 public class Main {
     private static final MailManager manager = new MailManager();
+    private static final String localMail = "juan@librecorreo.com";
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -25,15 +26,16 @@ public class Main {
             System.out.println("***************** Que desea hacer? *****************");
             System.out.println("\t1) Agregar mails al gestor.");
             System.out.println("\t2) Borrar mails del gestor.");
-            System.out.println("\t3) Mostrar mails ordenados por fecha.");
+            System.out.println("\t3) Mostrar mails ordenados por fecha (Ultimos primeros).");
             System.out.println("\t4) Filtrar mails por un rango de fecha.");
             System.out.println("\t5) Filtrar por remitente.");
             System.out.println("\t6) Mostrar mails ordenados por remitente.");
-            System.out.println("\t7) Filtrar mails por palabras o asunto.");
+            System.out.println("\t7) Buscar correos mediante coincidencia de palabra.");
             System.out.println("\t8) Buscar un correo por ID.");
-            System.out.println("\t0) Salir.");
+            System.out.println("\t9) Imprimir IDs arbol.");
+            System.out.println("\n\t0) Salir.");
 
-            System.out.println("\t9) Imprimir arbol.");
+
             System.out.println("****************************************************");
 
             System.out.print("Opcion: ");
@@ -83,6 +85,7 @@ public class Main {
 
         // Obtiene la ultima ID e incrementa en uno para setearselo al correo temporal
         tempMail.setId(manager.getLastIdIntroduced() + 1);
+        tempMail.setTo(localMail);
 
         while (true) {
             System.out.print("Remitente: ");
@@ -212,7 +215,18 @@ public class Main {
         String contentSearch = scanner.nextLine();
 
         Mail[] mailArray = manager.getByQuery(contentSearch);
-        System.out.println(mailArray.length);
+        if (mailArray.length > 0) {
+            System.out.print("Se han encontrado " + mailArray.length + " correos. Desea imprimirlos? (1: Si | 2: No): ");
+            int option = scanner.nextInt();
+
+            if (option == 1) {
+                for (Mail mail : mailArray) {
+                    System.out.println(mail);
+                }
+            }
+        } else {
+            System.out.println("\nNo se ha encontrado dicha query!");
+        }
     }
 
     private static void getDetailedEmail() {

@@ -13,6 +13,16 @@ public class LinkedList<AnyType> implements Iterable<AnyType> {
         size = 0;
     }
 
+    public LinkedList(AnyType a) {
+        begin = null;
+        size = 0;
+        try {
+            add(a, 0);
+        } catch (Exception e) {
+
+        }
+    }
+
     /**
      * Adds a node at the pos position
      *
@@ -98,6 +108,20 @@ public class LinkedList<AnyType> implements Iterable<AnyType> {
             return null;
         }
         return aux;
+    }
+
+    public boolean contains(AnyType value) {
+        LinkedNode<AnyType> current = begin;
+
+        while (current != null) {
+            if (current.data.equals(value)) {
+                return true;
+            }
+
+            current = current.next;
+        }
+
+        return false;
     }
 
     public Object[] toObjectArray() {

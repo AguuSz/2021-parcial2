@@ -2,18 +2,18 @@ package info3.parcial2;
 
 import info3.parcial2.models.Mail;
 import info3.parcial2.structures.AVLTree;
-import info3.parcial2.structures.HashMap;
 import info3.parcial2.structures.LinkedList;
 import info3.parcial2.structures.Node;
 import info3.parcial2.utils.MailParser;
 import info3.parcial2.utils.TreePrinter;
 
+import java.util.Hashtable;
+
 public class MailManager {
     private final AVLTree<String, Mail> dateTree = new AVLTree<>();
     private final AVLTree<Long, Mail> idTree = new AVLTree<>();
     private final AVLTree<String, LinkedList<Mail>> fromTree = new AVLTree<>();
-    private final HashMap<String, LinkedList<Mail>> queryMap = new HashMap<>();
-    private final HashMap<String, LinkedList<Mail>> subjectMap = new HashMap<>();
+    private final Hashtable<String, LinkedList<Mail>> queryMap = new Hashtable<>();
 
     private long lastIdIntroduced = 0;
 
@@ -21,7 +21,7 @@ public class MailManager {
         try {
             loadStructures();
         } catch (Exception e) {
-            System.out.println("Error al cargar las estructuras.");
+            System.out.println(e);
         }
     }
 
@@ -29,30 +29,26 @@ public class MailManager {
      * Carga las estructuras del mailManager con los datos correspondientes.
      */
     private void loadStructures() throws Exception {
-        long startTime = System.currentTimeMillis();
-        LinkedList<Mail> mailList = MailParser.parseFromFile("src/info3/emails/mails-1000.txt");
+        System.out.println("Cargando correos....");
+        LinkedList<Mail> mailList = MailParser.parseFromFile("src/info3/emails/mails-100.txt");
         setLastIdIntroduced(mailList.getSize());
 
         for (Mail mail : mailList) {
-            String[] content = mail.getContent().split(" ");
-            String[] subjectWords = mail.getSubject().split(" ");
-
-            for (String contentWord : content) {
-                // Llenamos el queryMap
-                try {
-                    queryMap.put(contentWord, new LinkedList<Mail>());
-                    queryMap.get(contentWord).add(mail);
-                } catch (Exception e) {
-                    queryMap.get(contentWord).add(mail);
+            String[] contentArray = mail.getContent().toLowerCase().split("([^a-zA-Z']+)'*\\1*");
+            LinkedList<String> emailContentList = new LinkedList<>();
+            for (String content : contentArray) {
+                if (!emailContentList.contains(content)) {
+                    emailContentList.add(content);
                 }
             }
-            for (String subjectWord : subjectWords) {
+
+            for (String contentWord : emailContentList) {
                 // Llenamos el queryMap
-                try {
-                    subjectMap.put(subjectWord, new LinkedList<Mail>());
-                    subjectMap.get(subjectWord).add(mail);
-                } catch (Exception e) {
-                    subjectMap.get(subjectWord).add(mail);
+                if (queryMap.get(contentWord) == null) {
+                    queryMap.put(contentWord, new LinkedList<Mail>(mail));
+                } else {
+                    if (!queryMap.get(contentWord).contains(mail))
+                        queryMap.get(contentWord).add(mail);
                 }
             }
 
@@ -60,10 +56,7 @@ public class MailManager {
             idTree.insert(mail.getId(), mail);
             insertIntoLinkedList(fromTree, mail.getFrom(), mail);
         }
-        long endTime = System.currentTimeMillis();
-        long timeElapsed = endTime - startTime;
-
-        System.out.println("Execution time in milliseconds: " + timeElapsed);
+        System.out.println();
     }
 
     /**
@@ -75,15 +68,31 @@ public class MailManager {
         dateTree.insert(m.getDate(), m);
         idTree.insert(m.getId(), m);
         insertIntoLinkedList(fromTree, m.getFrom(), m);
-        insertContentIntoHashTable(m);
-        // TODO: Faltan agregar las demas estructuras
+
+        String[] tempArray = m.getContent().toLowerCase().split("([^a-zA-Z']+)'*\\1*");
+        LinkedList<String> wordList = new LinkedList<>();
+        try {
+            for (String word : tempArray) {
+                if (!wordList.contains(word)) {
+                    wordList.add(word);
+                }
+            }
+
+            for (String word : wordList) {
+                // Llenamos el queryMap
+                if (queryMap.get(word) == null) {
+                    queryMap.put(word, new LinkedList<Mail>(m));
+                } else {
+                    if (!queryMap.get(word).contains(m))
+                        queryMap.get(word).add(m);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
 
         lastIdIntroduced++;
         System.out.println("\nSe ha agregado correctamente!");
-    }
-
-    private void insertContentIntoHashTable(Mail m) {
-        String[] content = m.getContent().split(" ");
     }
 
     public long getLastIdIntroduced() {
@@ -184,13 +193,17 @@ public class MailManager {
      * @return lista de mails que contienen dicha/s palabra/s
      */
     public Mail[] getByQuery(String query) {
+        LinkedList<Mail> mailList = queryMap.get(query);
         try {
-            LinkedList<Mail> list = queryMap.get(query);
-            return toEmailArray(list.toObjectArray(), list.getSize());
+            if (mailList.getSize() > 0) {
+                return toEmailArray(mailList.toObjectArray(), mailList.getSize());
+            } else {
+                return new Mail[0];
+            }
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            return new Mail[0];
         }
+
     }
 
     /**
